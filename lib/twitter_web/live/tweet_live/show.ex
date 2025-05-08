@@ -9,9 +9,11 @@ defmodule TwitterWeb.TweetLive.Show do
       <:subtitle>This is a tweet record from your database.</:subtitle>
 
       <:actions>
-        <.link patch={~p"/tweets/#{@tweet}/show/edit"} phx-click={JS.push_focus()}>
-          <.button>Edit tweet</.button>
-        </.link>
+        <%= if Ash.can?({@tweet, :update}, @current_user) do %>
+          <.link patch={~p"/tweets/#{@tweet}/show/edit"} phx-click={JS.push_focus()}>
+            <.button>Edit tweet</.button>
+          </.link>
+        <% end %>
       </:actions>
     </.header>
 
