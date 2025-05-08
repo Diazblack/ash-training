@@ -11,6 +11,7 @@ defmodule TwitterWeb.TweetLive.FormComponent do
       </.header>
 
       <.simple_form for={%{}} as={:tweet} id="tweet-form" phx-target={@myself} phx-submit="save">
+      <.input label="Label" type="text" name="tweet[label]" value={@tweet && @tweet.label} />
       <.input label="Text" type="textarea" name="tweet[text]" value={@tweet && @tweet.text} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Tweet</.button>

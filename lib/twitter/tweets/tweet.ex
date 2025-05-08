@@ -4,14 +4,15 @@ defmodule Twitter.Tweets.Tweet do
   actions do
     defaults [:read, :destroy]
     create :create do
-      accept [:text]
+      accept [:text, :label]
     end
-    update :update, accept: [:text]
+    update :update, accept: [:text, :label]
   end
 
   attributes do
     uuid_primary_key :id
     attribute :text, :string
+    attribute :label, :string
     timestamps()
   end
 
