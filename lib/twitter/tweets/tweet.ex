@@ -28,6 +28,6 @@ defmodule Twitter.Tweets.Tweet do
       allow_nil? false
     end
 
+    has_many :likes, Twitter.Tweets.Like
   end
-
 end
