@@ -40,4 +40,9 @@ defmodule Twitter.Tweets.Tweet do
 
     has_many :likes, Twitter.Tweets.Like
   end
+
+  calculations do
+    calculate :text_length, :integer, expr(string_length(text))
+    calculate :liked_by_me, :boolean, expr(exists(likes, user_id ==^actor(:id)))
+  end
 end
