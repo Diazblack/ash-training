@@ -11,7 +11,9 @@ defmodule Twitter.Tweets.Tweet do
 
   attributes do
     uuid_primary_key :id
-    attribute :text, :string
+    attribute :text, :string do
+      allow_nil? false
+    end
     attribute :label, :string
     timestamps()
   end

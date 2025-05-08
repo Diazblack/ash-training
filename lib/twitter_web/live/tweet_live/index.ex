@@ -24,7 +24,13 @@ defmodule TwitterWeb.TweetLive.Index do
         </span>
       </:col>
 
-      <:col :let={{_id, tweet}} label="Id">
+      <:col :let={{_id, tweet}} label="Label">
+        <span class="max-w-24 text-wrap">
+          <%= tweet.label %>
+        </span>
+      </:col>
+
+      <:col :let={{_id, tweet}} label="Text">
         <span class="max-w-24 text-wrap">
           <%= tweet.text %>
         </span>
