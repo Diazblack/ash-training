@@ -3,6 +3,20 @@ defmodule Twitter.Tweets.Like do
 
   actions do
     defaults [:read]
+    create :like do
+      accept [:tweet_id]
+      change relate_actor(:user)
+      upsert? true
+      upsert_identity :unique_user_tweet
+    end
+
+    destroy :unlike do
+      argument :tweet_id, :uuid, allow_nil?: false
+
+      change filter(
+        expr(tweet_id == ^arg(:tweet_id) and user_id == ^actor(:id))
+      )
+    end
   end
 
   attributes do
@@ -24,5 +38,13 @@ defmodule Twitter.Tweets.Like do
   postgres do
     table "likes"
     repo Twitter.Repo
+
+    references do
+      reference :tweet, on_delete: :delete
+    end
+  end
+
+  identities do
+    identity :unique_user_tweet, [:user_id, :tweet_id]
   end
 end
