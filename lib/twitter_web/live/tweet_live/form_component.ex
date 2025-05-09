@@ -37,10 +37,6 @@ defmodule TwitterWeb.TweetLive.FormComponent do
         |> Ash.Changeset.for_update(:update, params["tweet"] || %{}, actor: socket.assigns.current_user)
         |> Ash.update()
       else
-
-        # ** add the following line **
-        params = put_in(params, ["tweet", "user_id"], socket.assigns.current_user.id)
-
         # we're creating a tweet. Create logic goes here.
         Twitter.Tweets.Tweet
         |> Ash.Changeset.for_create(:create, params["tweet"] || %{}, actor: socket.assigns.current_user)

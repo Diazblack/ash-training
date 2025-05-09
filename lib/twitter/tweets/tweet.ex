@@ -4,9 +4,19 @@ defmodule Twitter.Tweets.Tweet do
   actions do
     defaults [:read, :destroy]
     create :create do
-      accept [:text, :label, :user_id]
+      accept [:text, :label]
+      change relate_actor(:user)
+      validate string_length(:text, max: 255)
     end
-    update :update, accept: [:text, :label]
+    update :update do
+      accept [:text, :label]
+      change relate_actor(:user)
+      validate string_length(:text, max: 255)
+    end
+
+    read :feed do
+      prepare build(sort: [inserted_at: :desc])
+    end
   end
 
   attributes do
