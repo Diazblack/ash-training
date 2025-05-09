@@ -1,13 +1,19 @@
 defmodule Twitter.Tweets.Tweet do
-  use Ash.Resource, otp_app: :twitter, domain: Twitter.Tweets, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :twitter,
+    domain: Twitter.Tweets,
+    data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer]
 
   actions do
     defaults [:read, :destroy]
+
     create :create do
       accept [:text, :label]
       change relate_actor(:user)
       validate string_length(:text, max: 255)
     end
+
     update :update do
       accept [:text, :label]
       change relate_actor(:user)
@@ -19,11 +25,27 @@ defmodule Twitter.Tweets.Tweet do
     end
   end
 
+  policies do
+    policy action_type(:read) do
+      authorize_if always()
+    end
+
+    policy action(:create) do
+      authorize_if always()
+    end
+
+    policy action(~w[update destroy]a) do
+      authorize_if expr(user_id ==^actor(:id))
+    end
+  end
+
   attributes do
     uuid_primary_key :id
+
     attribute :text, :string do
       allow_nil? false
     end
+
     attribute :label, :string
     timestamps()
   end
@@ -43,11 +65,13 @@ defmodule Twitter.Tweets.Tweet do
 
   calculations do
     calculate :text_length, :integer, expr(string_length(text))
-    calculate :liked_by_me, :boolean, expr(exists(likes, user_id ==^actor(:id)))
+    calculate :liked_by_me, :boolean, expr(exists(likes, user_id == ^actor(:id)))
   end
 
   aggregates do
     count :like_count, :likes
-    first :user_email, :user, :email
+    first :user_email, :user, :email do
+      authorize? false
+    end
   end
 end
