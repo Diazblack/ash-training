@@ -4,7 +4,7 @@ defmodule Twitter.Tweets.Tweet do
   actions do
     defaults [:read, :destroy]
     create :create do
-      accept [:text, :label]
+      accept [:text, :label, :user_id]
     end
     update :update, accept: [:text, :label]
   end
@@ -21,5 +21,13 @@ defmodule Twitter.Tweets.Tweet do
   postgres do
     table "tweets"
     repo Twitter.Repo
+  end
+
+  relationships do
+    belongs_to :user, Twitter.Accounts.User do
+      allow_nil? false
+    end
+
+    has_many :likes, Twitter.Tweets.Like
   end
 end

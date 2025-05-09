@@ -1,6 +1,8 @@
 defmodule TwitterWeb.TweetLive.Index do
   use TwitterWeb, :live_view
 
+  @tweet_loads [user: [:email]]
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -22,6 +24,10 @@ defmodule TwitterWeb.TweetLive.Index do
         <span class="max-w-24 text-wrap">
           <%= tweet.id %>
         </span>
+      </:col>
+
+      <:col :let={{_id, tweet}} label="Author">
+        <%= tweet.user.email %>
       </:col>
 
       <:col :let={{_id, tweet}} label="Label">
@@ -106,6 +112,7 @@ defmodule TwitterWeb.TweetLive.Index do
 
   @impl true
   def handle_info({TwitterWeb.TweetLive.FormComponent, {:saved, tweet}}, socket) do
+    tweet = Ash.load!(tweet, @tweet_loads, actor: socket.assigns.current_user)
     {:noreply, stream_insert(socket, :tweets, tweet)}
   end
 
