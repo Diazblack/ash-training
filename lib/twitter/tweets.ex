@@ -7,7 +7,12 @@ defmodule Twitter.Tweets do
   end
 
   json_api do
-    prefix "/api/json"
+    routes do
+      base_route "/tweets", Twitter.Tweets.Tweet do
+        index :feed
+        get :read, primary?: true
+      end
+    end
   end
 
   resources do
@@ -16,6 +21,7 @@ defmodule Twitter.Tweets do
       define :get_tweet, action: :read, get_by: [:id]
       define :delete_tweet, action: :destroy
     end
+
     resource Twitter.Tweets.Like do
       define :like, args: [:tweet_id]
       define :unlike, args: [:tweet_id], require_reference?: false
