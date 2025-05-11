@@ -3,7 +3,8 @@ defmodule Twitter.Tweets.Tweet do
     otp_app: :twitter,
     domain: Twitter.Tweets,
     data_layer: AshPostgres.DataLayer,
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshJsonApi.Resource]
 
   actions do
     defaults [:read, :destroy]
@@ -35,18 +36,26 @@ defmodule Twitter.Tweets.Tweet do
     end
 
     policy action(~w[update destroy]a) do
-      authorize_if expr(user_id ==^actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
   end
 
   attributes do
-    uuid_primary_key :id
-
-    attribute :text, :string do
-      allow_nil? false
+    uuid_primary_key :id do
+      description "Primary id of the Resource"
+      public? true
     end
 
-    attribute :label, :string
+    attribute :text, :string do
+      description "The content of the tweet"
+      allow_nil? false
+      public? true
+    end
+
+    attribute :label, :string do
+      description "Used to categorize each tweets"
+      public? true
+    end
     timestamps()
   end
 
@@ -70,8 +79,13 @@ defmodule Twitter.Tweets.Tweet do
 
   aggregates do
     count :like_count, :likes
+
     first :user_email, :user, :email do
       authorize? false
     end
+  end
+
+  json_api do
+    type "tweet"
   end
 end
